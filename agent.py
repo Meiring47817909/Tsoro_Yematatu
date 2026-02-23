@@ -1,10 +1,10 @@
-from tsoro_yematatu import print_select_board
 import random
 from game_interface import GameInterface
 
 class Agent:
-    def __init__(self, game_class: type[GameInterface]):
-        self.NewGame = game_class
+    def __init__(self, game: GameInterface, gui=None):
+        self.game = game
+        self.gui = gui
 
     def play_random_move(self, game: GameInterface) -> str:
         return random.choice(game.allowed_moves())
@@ -38,46 +38,34 @@ class Agent:
             except ValueError:
                 print("Please enter a valid number.")
 
-    # Play against the AI
     def interactive_game(self, computer_player='X'):
-        print_select_board()
-        game = self.NewGame()
         turn = 0
 
-        while game.playable():
+        if self.gui:
+            self.gui.draw_board()
+
+        while self.game.playable():
             turn += 1
             print(f"\nTurn {turn}")
 
-            if game.player == computer_player:
-                move = self.play_random_move(game)
-                if game.state.count(" ") > 1:
-                    # Placement phase
-                    playable_point_index = [
-                        i for i, (old, new) in enumerate(zip("".join(game.state), move))
-                        if old != new and new == game.player
-                    ][0]
-                    playable_point = [k for k, v in game.board.items() if v == playable_point_index][0]
-                    print(f"Computer ({game.player}) chooses placement move: {playable_point}")
-                else:
-                    # Movement phase
-                    diffs = [i for i, (old, new) in enumerate(zip("".join(game.state), move)) if old != new]
-
-                    removed_index = next(i for i in diffs if game.state[i] == game.player and move[i] == " ")
-                    added_index   = next(i for i in diffs if game.state[i] == " " and move[i] == game.player)
-
-                    from_pt = [k for k, v in game.board.items() if v == removed_index][0]
-                    to_pt   = [k for k, v in game.board.items() if v == added_index][0]
-
-                    print(f"Computer ({game.player}) chooses piece move: {from_pt} => {to_pt}")
-
-                game.make_move(move)
-                game.print_board()   # <-- print immediately after move
+            if self.game.player == computer_player:
+                move = self.play_random_move(self.game)
+                self.game.make_move(move)
+                print(f"Computer ({computer_player}) made a move.")
             else:
-                move = self.request_human_move(game)
-                game.make_move(move)
-                game.print_board()   # <-- print immediately after move
+                move = self.request_human_move(self.game)
+                self.game.make_move(move)
+
+            if self.gui:
+                self.gui.draw_board()
+            else:
+                self.game.print_board()
 
         print(f"\nFinal Turn {turn}")
-        game.print_board()
-        print(f"\n{"The winner is " + game.winner if game.winner else 'It\'s a draw!'}")
-        return game.winner or '-'
+        if self.gui:
+            self.gui.draw_board()
+        else:
+            self.game.print_board()
+
+        print(f"\n{'The winner is ' + self.game.winner if self.game.winner else 'It\'s a draw!'}")
+        return self.game.winner or '-'

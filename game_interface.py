@@ -22,10 +22,10 @@ class GameInterface(ABC):
         """Predict the winner based on the given state."""
         pass
 
-    @abstractmethod
-    def print_board(self) -> None:
-        """Print the current board state."""
-        pass
+    # @abstractmethod
+    # def print_board(self) -> None:
+    #     """Print the current board state."""
+    #     pass
 
     @property
     @abstractmethod

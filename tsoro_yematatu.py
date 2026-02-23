@@ -165,24 +165,3 @@ class TsoroYematatuGame(GameInterface):
             elif line_state == 'OOO':
                 winner = 'O'
         return winner
-
-    def print_board(self):
-        # Map indexes to point names
-        labels = ["C1", "M1", "I", "M2", "C2", "M3", "C3"]
-
-        # Replace blanks with labels for display
-        s = [val if val != " " else labels[i] for i, val in enumerate(self._state)]
-
-        print('          {} '.format(s[0]))
-        print('       /   |  \\ ')
-        print('     {}---{}---{} '.format(s[1], s[2], s[3]))
-        print('    /      |     \\ ')
-        print('   {}-----{}------{} '.format(s[4], s[5], s[6]))
-
-def print_select_board():
-    print("Use this as the select board:")
-    print('          C1 ')
-    print('       /   |  \\ ')
-    print('     M1----I----M2 ')
-    print('    /      |     \\ ')
-    print('   C2------M3-----C3 ')

@@ -1,6 +1,10 @@
+# main.py
 from agent import Agent
 from tsoro_yematatu import TsoroYematatuGame
+from board_gui import TsoroYematatuGUI
 
-# Create you agent (named 'X') and assign the learning rate and discount factor
-agent = Agent(TsoroYematatuGame)
+game = TsoroYematatuGame()
+gui = TsoroYematatuGUI(game)
+
+agent = Agent(game, gui)   # pass the *instance*, not the class
 agent.interactive_game()

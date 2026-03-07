@@ -2,70 +2,51 @@ import random
 from game_interface import GameInterface
 
 class Agent:
-    def __init__(self, game: GameInterface, gui=None):
+    def __init__(self, game, gui=None):
         self.game = game
         self.gui = gui
+        self.turn = 0
+        self.computer_player = 'X'
 
-    def play_random_move(self, game: GameInterface) -> str:
-        return random.choice(game.allowed_moves())
+    def play_random_move(self):
+        return random.choice(self.game.allowed_moves())
 
-    def request_human_move(self, game: GameInterface) -> str:
-        allowed_moves = game.allowed_moves()
-        phase = "placement" if game.state.count(" ") > 1 else "movement"
+    def next_turn(self):
+        # If game is no longer playable, show result and stop
+        if not self.game.playable():
+            print(f"\nFinal Turn {self.turn}")
+            self.gui.draw_board()
+            print(f"\n{'The winner is ' + self.game.winner if self.game.winner else 'It\'s a draw!'}")
+            return
 
-        print(f"Allowed {phase} moves for {game.player}:")
-        for idx, move in enumerate(allowed_moves):
-            diffs = [i for i, (old, new) in enumerate(zip("".join(game.state), move)) if old != new]
+        self.turn += 1
+        print(f"\nTurn {self.turn}")
 
-            if phase == "placement":
-                point = [k for k, v in game.board.items() if v == diffs[0]][0]
-                print(f"{idx}: {point}")
-            else:
-                removed_index = next(i for i in diffs if game.state[i] == game.player and move[i] == " ")
-                added_index   = next(i for i in diffs if game.state[i] == " " and move[i] == game.player)
+        if self.game.player == self.computer_player:
+            move = self.play_random_move()
+            self.game.make_move(move)
+            print(f"Computer ({self.computer_player}) made a move.")
+            self.gui.draw_board()
+            # Schedule next turn
+            self.gui.root.after(500, self.next_turn)
+        else:
+            # Human move: wait until GUI sets move_done
+            self.gui.move_done.set(False)
+            # Poll until move_done is True
+            self.check_human_move()
 
-                from_pt = [k for k, v in game.board.items() if v == removed_index][0]
-                to_pt   = [k for k, v in game.board.items() if v == added_index][0]
-
-                print(f"{idx}: move piece at {from_pt} to {to_pt}")
-
-        while True:
-            try:
-                idx = int(input("Enter move index: "))
-                if 0 <= idx < len(allowed_moves):
-                    return allowed_moves[idx]
-                print("Invalid index, try again.")
-            except ValueError:
-                print("Please enter a valid number.")
+    def check_human_move(self):
+        if self.gui.move_done.get():
+            self.gui.draw_board()
+            self.gui.root.after(500, self.next_turn)
+        else:
+            # Check again after 100ms
+            self.gui.root.after(100, self.check_human_move)
 
     def interactive_game(self, computer_player='X'):
-        turn = 0
+        self.computer_player = computer_player
+        self.gui.draw_board()
+        self.gui.root.after(500, self.next_turn)
+        self.gui.run()
 
-        if self.gui:
-            self.gui.draw_board()
-
-        while self.game.playable():
-            turn += 1
-            print(f"\nTurn {turn}")
-
-            if self.game.player == computer_player:
-                move = self.play_random_move(self.game)
-                self.game.make_move(move)
-                print(f"Computer ({computer_player}) made a move.")
-            else:
-                move = self.request_human_move(self.game)
-                self.game.make_move(move)
-
-            if self.gui:
-                self.gui.draw_board()
-            else:
-                self.game.print_board()
-
-        print(f"\nFinal Turn {turn}")
-        if self.gui:
-            self.gui.draw_board()
-        else:
-            self.game.print_board()
-
-        print(f"\n{'The winner is ' + self.game.winner if self.game.winner else 'It\'s a draw!'}")
-        return self.game.winner or '-'
+    

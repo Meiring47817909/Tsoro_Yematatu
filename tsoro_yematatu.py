@@ -26,7 +26,7 @@ class TsoroYematatuGame(GameInterface):
             "M3": 5,
             "C3": 6,
         }      
-        self._state = [" "] * 7  # a string of length 7 that encodes the state of the board 
+        self._state = ["_"] * 7  # a string of length 7 that encodes the state of the board 
         self._player = 'X'
         self.alternate = 0
         self._winner = None
@@ -43,13 +43,14 @@ class TsoroYematatuGame(GameInterface):
     def winner(self):
         return self._winner
 
+    # State space of available moves
     def allowed_moves(self):
         states = [] # Store all possible next states
 
         # First both players place all 3 their pieces on the board on any vacant points
         if self.alternate < 6:
             for i in range(len(self._state)):
-                if self._state[i] == " ":
+                if self._state[i] == "_":  # if the point is vacant
                     new_state = list(self._state)   # copy current state
                     new_state[i] = self._player     # place piece
                     states.append("".join(new_state))  # store as string snapshot
@@ -57,8 +58,8 @@ class TsoroYematatuGame(GameInterface):
         # After all pieces have been placed they can be moved
         else:
             # Find the vacant point
-            # Example board is: "XXO OOX"
-            vacant_point_index = [i for i, val in enumerate(self._state) if val == " "][0] # Example: 3
+            # Example board is: "XXO_OOX"
+            vacant_point_index = [i for i, val in enumerate(self._state) if val == "_"][0] # Example: 3
             vacant_point_key = [key for key, value in self.board.items() if value == vacant_point_index][0] # Example: m2
 
             # Get indexes where current player's pieces are located
@@ -89,7 +90,7 @@ class TsoroYematatuGame(GameInterface):
                 if vacant_point_key in adjacency[key]:  # check if vacant spot is adjacent
                     # build new state string with piece moved
                     new_state = list(self._state)  # convert to list for mutability
-                    new_state[self.board[key]] = " "  # clear old position
+                    new_state[self.board[key]] = "_"  # clear old position
                     new_state[self.board[vacant_point_key]] = self._player  # place piece at vacant spot
                     states.append("".join(new_state))
 
@@ -110,13 +111,14 @@ class TsoroYematatuGame(GameInterface):
                         # Check if landing spot is the vacant point
                         if vacant_point_key == landing:
                             # Landing must be empty, intermediate must be occupied
-                            if (self._state[self.board[landing]] == " " and self._state[self.board[intermediate]] in ["X", "O"]):                           
+                            if (self._state[self.board[landing]] == "_" and self._state[self.board[intermediate]] in ["X", "O"]):                           
                                 new_state = list(self._state) # Build new state string with piece jumped
-                                new_state[self.board[key]] = " " # clear old position
+                                new_state[self.board[key]] = "_" # clear old position
                                 new_state[self.board[landing]] = self._player # place piece at landing
                                 states.append("".join(new_state))
         return states
     
+    # Make move
     def make_move(self, next_state):
         if self._winner:
             raise(Exception("Game already completed, cannot make another move!"))

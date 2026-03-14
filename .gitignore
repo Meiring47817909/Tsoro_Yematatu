@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+env/
+env312/
+venv/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Installed packages
+Lib/
+Scripts/
+Include/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# PyTorch/TensorFlow checkpoints
+*.pth
+*.pt
+*.ckpt
+*.pkl

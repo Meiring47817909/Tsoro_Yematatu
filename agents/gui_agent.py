@@ -1,5 +1,4 @@
 import random
-from game_interface import GameInterface
 
 class GUIAgent:
     def __init__(self, game, gui=None, mode="random", rl_agent=None):
@@ -7,14 +6,23 @@ class GUIAgent:
         self.gui = gui
         self.turn = 0
         self.computer_player = 'X'
-        self.mode = mode          # "random" or "rl"
-        self.rl_agent = rl_agent  # trained RL agent if mode="rl"
+        self.mode = mode          # "random", "qlearning", or "dqn"
+        self.rl_agent = rl_agent  # trained agent if mode="qlearning" or "dqn"
 
+    # - gui_agent.py now supports random, Q-learning, and DQN opponents.
     def play_computer_move(self):
-        if self.mode == "rl" and self.rl_agent:
-            return self.rl_agent.play_select_move(self.game)
+        if self.mode in ["qlearning", "dqn"] and self.rl_agent:
+            return self.rl_agent.play_select_move(self.game) \
+                   if self.mode == "qlearning" else self._dqn_move()
         else:
             return random.choice(self.game.allowed_moves())
+
+    def _dqn_move(self):
+        # Encode state for DQN
+        state = [1 if c == 'X' else -1 if c == 'O' else 0 for c in self.game.state]
+        allowed_moves = self.game.allowed_moves()
+        action_index = self.rl_agent.select_action(state, allowed_moves)
+        return allowed_moves[action_index]
 
     def next_turn(self):
         if not self.game.playable():

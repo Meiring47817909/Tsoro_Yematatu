@@ -1,6 +1,6 @@
 import tkinter as tk
 
-class TsoroYematatuGUI:
+class BoardGUI:
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()

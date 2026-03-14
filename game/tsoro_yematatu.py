@@ -13,7 +13,7 @@
    The original code as been modified for educational purposes.
 '''
 
-from game_interface import GameInterface
+from game.game_interface import GameInterface
 
 class TsoroYematatuGame(GameInterface):
     def __init__(self):
@@ -138,10 +138,7 @@ class TsoroYematatuGame(GameInterface):
             self._player = 'X'
 
     def __valid_move(self, next_state):
-        allowed_moves = self.allowed_moves()  #get all possible next states
-        if any(state == next_state for state in allowed_moves): #check if the input next_state is in 
-            return True
-        return False
+        return next_state in self.allowed_moves()
     
     def playable(self):
         return ( (not self._winner) and any(self.allowed_moves()) )

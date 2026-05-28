@@ -47,7 +47,7 @@ class DQNAgent:
                  lr=0.001, batch_size=64):
 
         self.state_dim = state_dim
-        self.action_dim = action_dim  # maximum number of moves (7 for Tsoro Yematatu)
+        self.action_dim = action_dim
         self.epsilon = epsilon
         self.epsilon_min = epsilon_min
         self.epsilon_decay = epsilon_decay
@@ -62,6 +62,9 @@ class DQNAgent:
                 device = torch.device("mps")
             else:
                 device = torch.device("cpu")
+
+        # 🔧 Store device properly
+        self.device = device
 
         # Networks on device
         self.q_net = QNetwork(state_dim, action_dim).to(self.device)

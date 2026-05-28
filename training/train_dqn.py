@@ -10,7 +10,7 @@ def agent_reward(game):
     if game.winner == 'O': return -1.0
     return 0.0
 
-def train_dqn(num_episodes=5000, target_update_freq=100):
+def train_dqn(num_episodes=1000, target_update_freq=100):
     # Detect device (GPU if available, else CPU)
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -51,12 +51,17 @@ def train_dqn(num_episodes=5000, target_update_freq=100):
         if episode % target_update_freq == 0:
             agent.update_target_network()
 
-        if (episode + 1) % 500 == 0:
+        # Save checkpoints at 100, 500, and 1000 episodes
+        if episode + 1 in [100, 500, 1000]:
+            filename = f"dqn_tsoro_{episode+1}.pth"
+            agent.save_model(filename)
+            print(f"Checkpoint saved: {filename}")
+
+        if (episode + 1) % 100 == 0:
             print(f"Episode {episode+1}, Epsilon: {agent.epsilon:.2f}")
 
-    agent.save_model("dqn_tsoro.pth")
-    print("Training complete, model saved.")
+    print("Training complete, final model saved at 1000 episodes.")
     return agent
 
 if __name__ == "__main__":
-    train_dqn(5000)
+    train_dqn(1000)

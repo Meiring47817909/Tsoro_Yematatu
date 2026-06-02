@@ -15,11 +15,9 @@ This project implements the traditional African board game **Tsoro Yematatu** an
     ├── agents/
     │   ├── gui_agent.py            # GUI wrapper for human vs computer
     │   ├── qlearning_agent.py      # Tabular Q-learning agent
-    │   ├── dqn_agent.py            # Deep Q-learning agent (PyTorch)
     │
     ├── training/
     │   ├── train_qlearning.py      # Train tabular Q-learning agent
-    │   ├── train_dqn.py            # Train DQN agent
     │
     ├── evaluation/
     │   ├── evaluate_agents.py      # Pit agents against each other
@@ -32,17 +30,14 @@ This project implements the traditional African board game **Tsoro Yematatu** an
 - **Q-learning (tabular):**
   ```bash
   python training/train_qlearning.py
+  ```
 Saves qlearning_table.pkl
-
-- **DQN (neural network):**
-  ```bash
-  python training/train_dqn.py
-Saves dqn_tsoro.pth
 
 ### 2. Evaluate Agents
 - **Run head‑to‑head matches between trained agents:**
   ```bash
   python evaluation/evaluate_agents.py
+  ```
 Outputs win/draw statistics.
 
 ### 3. Play GUI
@@ -53,7 +48,6 @@ Outputs win/draw statistics.
 ### Options
 - `--mode random` → computer plays random moves  
 - `--mode qlearning` → computer uses trained Q‑learning agent  
-- `--mode dqn` → computer uses trained DQN agent  
 - `--player X|O` → choose which side the computer plays  
 
 ### ✨ Features
@@ -61,12 +55,10 @@ Game logic fully encapsulated in TsoroYematatuGame.
 Agents with consistent interfaces (select_action or play_select_move).
 Training scripts separated from evaluation.
 GUI with drag‑and‑drop and placement phases.
-Save/load functionality for both Q‑learning and DQN agents.
+Save/load functionality for Q‑learning agent.
 ### 🔧 Requirements
 Python 3.9+
 Tkinter (usually included with Python)
-PyTorch (pip install torch)
 ### 📌 Notes
-Training DQN requires thousands of episodes for meaningful results.
-Q‑learning converges faster but is less generalizable.
+Q‑learning converges quickly to play Tsoro Yematatu.
 GUI is for human play and visualization, not training.

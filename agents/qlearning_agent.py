@@ -11,7 +11,7 @@ class QLearningAgent:
         self.alpha = alpha           # learning rate
         self.value_player = value_player
 
-    def learn_game(self, num_episodes=1000):
+    def learn_game(self, num_episodes):
         for _ in range(num_episodes):
             self.learn_from_episode()
 
@@ -77,10 +77,10 @@ class QLearningAgent:
 
     def __reward(self, game):
         if game.winner == self.value_player:
-            return 1.0
+            return 1.0 - game.alternate * 0.01  # small penalty for longer wins
         elif game.winner:
-            return -1.0
-        return 0.0
+            return -1.0 - game.alternate * 0.01  # small penalty for longer games
+        return 0.0 
 
     def save(self, filepath="qlearning_table.pkl"):
         with open(filepath, "wb") as f:

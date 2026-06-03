@@ -74,13 +74,13 @@ class QLearningAgent:
             return self.__argmax_V(allowed_state_values)
         else:
             return self.__random_V(allowed_state_values)
-
+    
     def __reward(self, game):
-        if game.winner == self.value_player:
-            return 1.0 - game.alternate * 0.01  # small penalty for longer wins
-        elif game.winner:
-            return -1.0 - game.alternate * 0.01  # small penalty for longer games
-        return 0.0 
+        if game.winner == self.value_player: 
+            return 1.0 
+        elif game.winner: 
+            return -1.0
+        return 0.0
 
     def save(self, filepath="qlearning_table.pkl"):
         with open(filepath, "wb") as f:

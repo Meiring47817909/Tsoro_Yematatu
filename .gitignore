@@ -26,4 +26,3 @@ Include/
 *.pth
 *.pt
 *.ckpt
-*.pkl

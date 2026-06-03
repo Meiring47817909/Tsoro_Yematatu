@@ -20,6 +20,8 @@ class QLearningAgent:
         _, move = self.learn_select_move(game)
         while move:
             move = self.learn_from_move(game, move)
+            if game.alternate >= 50: # Cap at 50 turns
+                break
 
     def learn_select_move(self, game):
         allowed_state_values = self.__state_values(game.allowed_moves())
@@ -54,7 +56,6 @@ class QLearningAgent:
         game.make_move(move)
         r = self.__reward(game)
 
-        td_target = r
         next_state_value = 0.0
         selected_next_move = None
 
@@ -73,13 +74,13 @@ class QLearningAgent:
         if game.player == self.value_player:
             return self.__argmax_V(allowed_state_values)
         else:
-            return self.__random_V(allowed_state_values)
+            return self.__argmin_V(allowed_state_values)
     
     def __reward(self, game):
         if game.winner == self.value_player: 
-            return 1.0 
+            return 1.0 - (game.alternate * 0.01)
         elif game.winner: 
-            return -1.0
+            return -1.0 + (game.alternate * 0.01)
         return 0.0
 
     def save(self, filepath="qlearning_table.pkl"):

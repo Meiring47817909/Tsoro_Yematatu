@@ -12,8 +12,8 @@ def train_qlearning(num_episodes=1000):
     # Train the agent
     agent.learn_game(num_episodes)
 
-    # Optionally save learned Q-table
-    agent.save(f"qlearning_table_{num_episodes}.pkl")
+    # Save learned Q-table to the exact name main.py expects
+    agent.save(f"qlearning_table{num_episodes}.pkl")
 
     print(f"Training complete after {num_episodes} episodes.")
     return agent
